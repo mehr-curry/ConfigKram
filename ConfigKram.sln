@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigKram", "ConfigKram\ConfigKram.csproj", "{1CF776DA-6E0E-407D-8572-2C8E55F6C3FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration", "Configuration\Configuration.csproj", "{7D14ACC9-A8F0-429A-89EB-DCFA30F4F54B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CF776DA-6E0E-407D-8572-2C8E55F6C3FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CF776DA-6E0E-407D-8572-2C8E55F6C3FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CF776DA-6E0E-407D-8572-2C8E55F6C3FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CF776DA-6E0E-407D-8572-2C8E55F6C3FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D14ACC9-A8F0-429A-89EB-DCFA30F4F54B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D14ACC9-A8F0-429A-89EB-DCFA30F4F54B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D14ACC9-A8F0-429A-89EB-DCFA30F4F54B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D14ACC9-A8F0-429A-89EB-DCFA30F4F54B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
