@@ -10,18 +10,11 @@ namespace ConfigurationTests
         public void LoadTest()
         {
             var configuration = new ReflectionConfiguration("ConfigKram.config");
-            var test = new TestObject{TestString = "", TestInt = 0, TestNullableInt = 1};
+            var test = new TestConfigurationObject{TestString = "", TestInt = 0, TestNullableInt = 1};
             configuration.Load(test);
             Assert.Equal("default", test.TestString);
             Assert.Equal(10, test.TestInt);
             Assert.Equal(null, test.TestNullableInt);
         }
-    }
-
-    public class TestObject
-    {
-        public string TestString { get; set; }
-        public int TestInt { get; set; }
-        public int? TestNullableInt { get; set; }
     }
 }
