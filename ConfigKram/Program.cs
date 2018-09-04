@@ -12,7 +12,7 @@ namespace ConfigKram
 
             var test = new TestObject();
             var configuration = new ReflectionConfiguration("ConfigKram.config");
-            configuration.Load(test);
+//            configuration.Load(test);
             test.TestInt++;
             test.TestNullableInt = null;
             configuration.Save(test);
