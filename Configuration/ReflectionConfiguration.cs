@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -100,7 +101,7 @@ namespace Configuration
                 switch (value)
                 {
                     case IConvertible convertible:
-                        element.Value = Convert.ToString(convertible);
+                        element.Value = Convert.ToString(convertible, CultureInfo.InvariantCulture);
                         break;
                     case null:
                         element.Value = null;
