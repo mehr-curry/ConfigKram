@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace Configuration
 {
-    public class ReflectionConfiguration : IConfiguration
+    public class ReflectionAdapter : IConfigurationAdapter
     {
-        public string FileName { get; set; }
+        private readonly IConfigurationStore _store;
 
-        public ReflectionConfiguration(string configFile)
+        public ReflectionAdapter(IConfigurationStore store)
         {
-            FileName = configFile;
+            _store = store ?? throw new ArgumentNullException(nameof(store));
         }
 
         public void Load(object configurationObject)
@@ -20,12 +20,12 @@ namespace Configuration
             if (configurationObject == null) throw new ArgumentNullException(nameof(configurationObject));
 
             var configOjectType = configurationObject.GetType();
-            var section = GetSection(configOjectType);
+            var values = _store.GetValues(configOjectType.Name);
 
             foreach (var property in configOjectType.GetProperties())
             {
                 // Wir übergehen die Eigenschaft, wenn es keinen Wert gibt
-                if (!section.Children.AllKeys.Contains(property.Name))
+                if (!values.TryGetValue(property.Name, out var value))
                 {
                     continue;
                 }
@@ -49,9 +49,6 @@ namespace Configuration
                     propertyType = genericArgs[0];
                     isNullable = true;
                 }
-
-                // wir ermitteln den konfigurierten Wert
-                object value = section.Children[property.Name].Value;
 
                 // und prüfen, ob wir ihn konvertieren können/müssen.
                 if (propertyType != typeof(string) && 
@@ -83,17 +80,17 @@ namespace Configuration
             if (configurationObject == null) throw new ArgumentNullException(nameof(configurationObject));
 
             var configOjectType = configurationObject.GetType();
-            var section = GetSection(configOjectType);
+            var values = _store.GetValues(configOjectType.Name);
 
             foreach (var property in configOjectType.GetProperties())
             {
                 // element aus der Section holen oder ggf. ein neues anlegen.
-                var element = section.Children[property.Name];
-                if (element == null)
-                {
-                    element = new KeyValueConfigurationElement(property.Name, null);
-                    section.Children.Add(element);
-                }
+//                var element = values[property.Name];
+//                if (element == null)
+//                {
+//                    element = new KeyValueConfigurationElement(property.Name, null);
+//                    values.Children.Add(element);
+//                }
 
                 // den Wert aus dem Objekt holen
                 var value = property.GetValue(configurationObject);
@@ -101,37 +98,17 @@ namespace Configuration
                 switch (value)
                 {
                     case IConvertible convertible:
-                        element.Value = Convert.ToString(convertible, CultureInfo.InvariantCulture);
-                        break;
-                    case null:
-                        element.Value = null;
+                        value = Convert.ToString(convertible, CultureInfo.InvariantCulture);
                         break;
                 }
+
+                values[property.Name] = value;
             }
 
-            section.CurrentConfiguration.Save();
+            _store.SetValues(configOjectType.Name, values);
         }
 
 
-        private KeyValueConfigurationSection GetSection(Type configOjectType)
-        {
-            if (configOjectType == null) throw new ArgumentNullException(nameof(configOjectType));
-            if(!File.Exists(FileName)) throw new FileNotFoundException("", FileName);
-            
-            var filemap = new ExeConfigurationFileMap {ExeConfigFilename = FileName};
-            var configuration = ConfigurationManager.OpenMappedExeConfiguration(filemap, ConfigurationUserLevel.None);
-            var section = configuration.GetSection(configOjectType.Name);
-
-            // gibt es die Section noch nicht, erstellen wir eine neue.
-            if (section == null)
-            {
-                section = new KeyValueConfigurationSection();
-                configuration.Sections.Add(configOjectType.Name, section);
-            }
-            
-            var keyValueSection = section as KeyValueConfigurationSection;
-            
-            return keyValueSection;
-        }
+        
     }
 }
