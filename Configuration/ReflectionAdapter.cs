@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
@@ -6,15 +7,22 @@ using System.Linq;
 
 namespace Configuration
 {
+    /// <summary>A ConfigurationAdapter implementation which uses reflection to fill an object with data or retrieve data from an object.</summary>
     public class ReflectionAdapter : IConfigurationAdapter
     {
         private readonly IConfigurationStore _store;
 
+        /// <summary>Initializes a new instance with the provided storage object to access an underlying storage.</summary>
+        /// <param name="store">A configration storage to get data from or set data to.</param>
         public ReflectionAdapter(IConfigurationStore store)
         {
             _store = store ?? throw new ArgumentNullException(nameof(store));
         }
 
+        /// <summary>Loads configuration data into the passed instance.</summary>
+        /// <param name="configurationObject">The object which has to be filled with data.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="configurationObject"/> is null.</exception>
+        /// <exception cref="InvalidOperationException">If a property is of type Nullable and defines not exactly 1 type parameter.</exception>
         public void Load(object configurationObject)
         {
             if (configurationObject == null) throw new ArgumentNullException(nameof(configurationObject));
@@ -24,7 +32,8 @@ namespace Configuration
 
             foreach (var property in configOjectType.GetProperties())
             {
-                // Wir übergehen die Eigenschaft, wenn es keinen Wert gibt
+                // We retrieve the value from the storages return value.
+                // If there is no entry we will skip the property.
                 if (!values.TryGetValue(property.Name, out var value))
                 {
                     continue;
@@ -33,8 +42,9 @@ namespace Configuration
                 var propertyType = property.PropertyType;
                 var isNullable = propertyType.IsByRef;
 
-                // Als nächstes überprüfen wir, ob die Eigenschaft vom Typ Nullable<T> ist.
-                // Ggf. nehmen wir das erste Typargument als Typ.
+                // As the next step we will check whether the properties type is
+                // is Nullable<T>. If so we will take the type argument as our 
+                // target type
                 if (propertyType.IsConstructedGenericType &&
                     propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
@@ -50,13 +60,13 @@ namespace Configuration
                     isNullable = true;
                 }
 
-                // und prüfen, ob wir ihn konvertieren können/müssen.
+                // We are going to convert the raw value from the storage into something
+                // the property will accept.
                 if (propertyType != typeof(string) && 
                     typeof(IConvertible).IsAssignableFrom(propertyType))
                 {
-                    // sollte die Eigentschaft nullable sein, interpretieren wir
-                    // string.Empty als null. Ein leerer String kann leider nicht
-                    // per Convert.ChangeType konvertiert werden.
+                    // If the property is nullable, we accept String.Empty as null.
+                    // Convert.ChangeType cannot convert String.Empty into a primitve value.
                     if (isNullable && 
                         value is string stringValue &&
                         string.IsNullOrEmpty(stringValue))
@@ -65,34 +75,28 @@ namespace Configuration
                     }
                     else
                     {
-                        // Anderfalls lassen wir das Framework den Wert konvertieren.
+                        // otherwise we use the frameworks capabilities to 
+                        // convert the string into our target type
                         value = Convert.ChangeType(value, propertyType);
                     }
                 }
                 
-                // Wenn der Typ der Eigenschaft nullable ist, wird der Wert implizit konvertiert.
                 property.SetValue(configurationObject, value);
             }
         }
 
+        /// <summary>Stores the passed object into a configuration storage.</summary>
+        /// <param name="configurationObject">The object with data which has to be stored.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="configurationObject"/> is null.</exception>
         public void Save(object configurationObject)
         {
             if (configurationObject == null) throw new ArgumentNullException(nameof(configurationObject));
 
             var configOjectType = configurationObject.GetType();
-            var values = _store.GetValues(configOjectType.Name);
+            var values = new Dictionary<string, object>(); //_store.GetValues(configOjectType.Name));
 
             foreach (var property in configOjectType.GetProperties())
             {
-                // element aus der Section holen oder ggf. ein neues anlegen.
-//                var element = values[property.Name];
-//                if (element == null)
-//                {
-//                    element = new KeyValueConfigurationElement(property.Name, null);
-//                    values.Children.Add(element);
-//                }
-
-                // den Wert aus dem Objekt holen
                 var value = property.GetValue(configurationObject);
                 
                 switch (value)
