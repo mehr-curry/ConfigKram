@@ -9,6 +9,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Configuration.Base\Configuration.Base.csproj" />
     <ProjectReference Include="..\Configuration\Configuration.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -16,6 +17,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ConfigKramSaveTest.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigKramLoadTest.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
