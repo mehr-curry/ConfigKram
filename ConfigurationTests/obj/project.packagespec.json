@@ -1,0 +1,62 @@
+﻿{
+  "version": "1.0.0",
+  "restore": {
+    "projectUniqueName": "/home/merc/source/ConfigKram/ConfigurationTests/ConfigurationTests.csproj",
+    "projectName": "ConfigurationTests",
+    "projectPath": "/home/merc/source/ConfigKram/ConfigurationTests/ConfigurationTests.csproj",
+    "outputPath": "/home/merc/source/ConfigKram/ConfigurationTests/obj/",
+    "projectStyle": "PackageReference",
+    "fallbackFolders": [
+      "/usr/share/dotnet/sdk/NuGetFallbackFolder"
+    ],
+    "originalTargetFrameworks": [
+      "netcoreapp2.1"
+    ],
+    "frameworks": {
+      "netcoreapp2.1": {
+        "projectReferences": {
+          "/home/merc/source/ConfigKram/Configuration.Base/Configuration.Base.csproj": {
+            "projectPath": "/home/merc/source/ConfigKram/Configuration.Base/Configuration.Base.csproj"
+          },
+          "/home/merc/source/ConfigKram/Configuration/Configuration.csproj": {
+            "projectPath": "/home/merc/source/ConfigKram/Configuration/Configuration.csproj"
+          }
+        }
+      }
+    },
+    "warningProperties": {
+      "warnAsError": [
+        "NU1605"
+      ]
+    }
+  },
+  "frameworks": {
+    "netcoreapp2.1": {
+      "dependencies": {
+        "Microsoft.NET.Test.Sdk": {
+          "target": "Package",
+          "version": "[15.8.0, )"
+        },
+        "Microsoft.NETCore.App": {
+          "suppressParent": "All",
+          "target": "Package",
+          "version": "[2.1.0, )",
+          "autoReferenced": true
+        },
+        "xunit": {
+          "target": "Package",
+          "version": "[2.3.1, )"
+        },
+        "xunit.runner.visualstudio": {
+          "target": "Package",
+          "version": "[2.3.1, )"
+        }
+      },
+      "imports": [
+        "net461"
+      ],
+      "assetTargetFallback": true,
+      "warn": true
+    }
+  }
+}

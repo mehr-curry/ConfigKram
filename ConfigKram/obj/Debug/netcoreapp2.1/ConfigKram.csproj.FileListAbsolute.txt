@@ -1,0 +1,14 @@
+/home/merc/source/ConfigKram/ConfigKram/obj/Debug/netcoreapp2.1/ConfigKram.csprojAssemblyReference.cache
+/home/merc/source/ConfigKram/ConfigKram/obj/Debug/netcoreapp2.1/ConfigKram.csproj.CoreCompileInputs.cache
+/home/merc/source/ConfigKram/ConfigKram/obj/Debug/netcoreapp2.1/ConfigKram.AssemblyInfoInputs.cache
+/home/merc/source/ConfigKram/ConfigKram/obj/Debug/netcoreapp2.1/ConfigKram.AssemblyInfo.cs
+/home/merc/source/ConfigKram/ConfigKram/bin/Debug/netcoreapp2.1/ConfigKram.deps.json
+/home/merc/source/ConfigKram/ConfigKram/bin/Debug/netcoreapp2.1/ConfigKram.runtimeconfig.json
+/home/merc/source/ConfigKram/ConfigKram/bin/Debug/netcoreapp2.1/ConfigKram.runtimeconfig.dev.json
+/home/merc/source/ConfigKram/ConfigKram/bin/Debug/netcoreapp2.1/ConfigKram.dll
+/home/merc/source/ConfigKram/ConfigKram/bin/Debug/netcoreapp2.1/ConfigKram.pdb
+/home/merc/source/ConfigKram/ConfigKram/obj/Debug/netcoreapp2.1/ConfigKram.dll
+/home/merc/source/ConfigKram/ConfigKram/obj/Debug/netcoreapp2.1/ConfigKram.pdb
+/home/merc/source/ConfigKram/ConfigKram/bin/Debug/netcoreapp2.1/Configuration.dll
+/home/merc/source/ConfigKram/ConfigKram/bin/Debug/netcoreapp2.1/Configuration.pdb
+/home/merc/source/ConfigKram/ConfigKram/obj/Debug/netcoreapp2.1/ConfigKram.csproj.CopyComplete

@@ -19,6 +19,11 @@ namespace Configuration
             _store = store ?? throw new ArgumentNullException(nameof(store));
         }
 
+        public bool Exists(object configurationObject)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>Loads configuration data into the passed instance.</summary>
         /// <param name="configurationObject">The object which has to be filled with data.</param>
         /// <exception cref="ArgumentNullException">If <paramref name="configurationObject"/> is null.</exception>
