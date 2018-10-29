@@ -1,0 +1,12 @@
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\bin\Debug\netstandard2.0\Configuration.deps.json
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\bin\Debug\netstandard2.0\Configuration.dll
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\bin\Debug\netstandard2.0\Configuration.pdb
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\bin\Debug\netstandard2.0\Configuration.Base.dll
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\bin\Debug\netstandard2.0\Configuration.Base.pdb
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\obj\Debug\netstandard2.0\Configuration.csprojAssemblyReference.cache
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\obj\Debug\netstandard2.0\Configuration.csproj.CoreCompileInputs.cache
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\obj\Debug\netstandard2.0\Configuration.AssemblyInfoInputs.cache
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\obj\Debug\netstandard2.0\Configuration.AssemblyInfo.cs
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\obj\Debug\netstandard2.0\Configuration.csproj.CopyComplete
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\obj\Debug\netstandard2.0\Configuration.dll
+D:\Users\beyer\Source\Repos\ConfigKram\Configuration\obj\Debug\netstandard2.0\Configuration.pdb
