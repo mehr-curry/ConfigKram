@@ -1,57 +1,61 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Globalization;
-using System.IO;
-using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Configuration
 {
-    /// <summary>A ConfigurationAdapter implementation which uses reflection to fill an object with data or retrieve data from an object.</summary>
-    public class ReflectionAdapter : IConfigurationAdapter
+    public class ExpressionAdapter : IConfigurationAdapter
     {
+        public static IDictionary<Type, Delegate> ExpressionCache { get; } = new Dictionary<Type, Delegate>();
         private readonly IConfigurationStore _store;
 
         /// <summary>Initializes a new instance with the provided storage object to access an underlying storage.</summary>
         /// <param name="store">A configration storage to get data from or set data to.</param>
-        public ReflectionAdapter(IConfigurationStore store)
+        public ExpressionAdapter(IConfigurationStore store)
         {
             _store = store ?? throw new ArgumentNullException(nameof(store));
         }
 
-        public T Load<T>()
-            where T : new()
+        public T Load<T>() where T : new()
         {
             var result = new T();
             LoadInto(result);
             return result;
         }
 
-        /// <summary>Loads configuration data into the passed instance.</summary>
-        /// <param name="configurationObject">The object which has to be filled with data.</param>
-        /// <exception cref="ArgumentNullException">If <paramref name="configurationObject"/> is null.</exception>
-        /// <exception cref="InvalidOperationException">If a property is of type Nullable and defines not exactly 1 type parameter.</exception>
         public void LoadInto(object configurationObject)
         {
             if (configurationObject == null) throw new ArgumentNullException(nameof(configurationObject));
 
             var configObjectType = configurationObject.GetType();
             var values = _store.GetValues(configObjectType.Name);
+            var piIndexer = typeof(IDictionary<string, object>).GetProperty("Item", new[] {typeof(string)});
+            var expValuesParameter = Expression.Parameter(typeof(IDictionary<string, object>), nameof(values));
+            var expObjectParameter = Expression.Parameter(configObjectType, nameof(configurationObject));
+
+            var assignmentList = new List<Expression>();
 
             foreach (var property in configObjectType.GetProperties())
             {
-                // We retrieve the value from the storages return value.
-                // If there is no entry we will skip the property.
-                if (!values.TryGetValue(property.Name, out var value))
-                {
-                    continue;
-                }
+                var expValuesIndexer =
+                    Expression.MakeIndex(expValuesParameter, piIndexer, new[] {Expression.Constant(property.Name)});
+                var expTarget = Expression.Property(expObjectParameter, property);
+                var expTargetPropType = Expression.Constant(property.PropertyType);
+                var miConvertTo =
+                    typeof(ExpressionAdapter).GetMethod(nameof(ConvertTo),
+                        BindingFlags.Static | BindingFlags.NonPublic);
+                var expCallConvert = Expression.Call(miConvertTo, expTargetPropType, expValuesIndexer);
+                var expAssign = Expression.Assign(expTarget, Expression.Convert(expCallConvert, property.PropertyType));
 
-                var propertyType = property.PropertyType;
-                
-                property.SetValue(configurationObject, 
-                                  ConvertTo(propertyType, value));
+                assignmentList.Add(expAssign);
             }
+
+            var expAssignBlock = Expression.Block(assignmentList);
+
+            Expression.Lambda(expAssignBlock, expObjectParameter, expValuesParameter)
+                .Compile()
+                .DynamicInvoke(configurationObject, values);
         }
 
         private static object ConvertTo(Type propertyType, object value)
@@ -100,34 +104,9 @@ namespace Configuration
             return value;
         }
 
-        /// <summary>Stores the passed object into a configuration storage.</summary>
-        /// <param name="configurationObject">The object with data which has to be stored.</param>
-        /// <exception cref="ArgumentNullException">If <paramref name="configurationObject"/> is null.</exception>
+
         public void Save(object configurationObject)
         {
-            if (configurationObject == null) throw new ArgumentNullException(nameof(configurationObject));
-
-            var configOjectType = configurationObject.GetType();
-            var values = new Dictionary<string, object>(); //_store.GetValues(configOjectType.Name));
-
-            foreach (var property in configOjectType.GetProperties())
-            {
-                var value = property.GetValue(configurationObject);
-                
-                switch (value)
-                {
-                    case IConvertible convertible:
-                        value = Convert.ToString(convertible, CultureInfo.InvariantCulture);
-                        break;
-                }
-
-                values[property.Name] = value;
-            }
-
-            _store.SetValues(configOjectType.Name, values);
         }
-
-
-        
     }
 }

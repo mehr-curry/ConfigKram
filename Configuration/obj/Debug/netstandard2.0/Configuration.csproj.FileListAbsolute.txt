@@ -1,0 +1,12 @@
+/home/merc/source/ConfigKram/Configuration/bin/Debug/netstandard2.0/Configuration.deps.json
+/home/merc/source/ConfigKram/Configuration/bin/Debug/netstandard2.0/Configuration.dll
+/home/merc/source/ConfigKram/Configuration/bin/Debug/netstandard2.0/Configuration.pdb
+/home/merc/source/ConfigKram/Configuration/bin/Debug/netstandard2.0/Configuration.Base.dll
+/home/merc/source/ConfigKram/Configuration/bin/Debug/netstandard2.0/Configuration.Base.pdb
+/home/merc/source/ConfigKram/Configuration/obj/Debug/netstandard2.0/Configuration.csprojAssemblyReference.cache
+/home/merc/source/ConfigKram/Configuration/obj/Debug/netstandard2.0/Configuration.csproj.CoreCompileInputs.cache
+/home/merc/source/ConfigKram/Configuration/obj/Debug/netstandard2.0/Configuration.AssemblyInfoInputs.cache
+/home/merc/source/ConfigKram/Configuration/obj/Debug/netstandard2.0/Configuration.AssemblyInfo.cs
+/home/merc/source/ConfigKram/Configuration/obj/Debug/netstandard2.0/Configuration.csproj.CopyComplete
+/home/merc/source/ConfigKram/Configuration/obj/Debug/netstandard2.0/Configuration.dll
+/home/merc/source/ConfigKram/Configuration/obj/Debug/netstandard2.0/Configuration.pdb
