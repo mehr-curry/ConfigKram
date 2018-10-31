@@ -2,7 +2,8 @@
 {
     public interface IConfigurationAdapter
     {
-        void Load(object configurationObject);
+        T Load<T>() where T : new();
+        void LoadInto(object configurationObject);
         void Save(object configurationObject);
     }
 }
