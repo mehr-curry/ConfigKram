@@ -4,7 +4,8 @@
     public interface IConfigurationAdapter
     {
         bool Exists(object configurationObject);
-        void Load(object configurationObject);
+        T Load<T>() where T : new();
+        void LoadInto(object configurationObject);
         void Save(object configurationObject);
     }
 }

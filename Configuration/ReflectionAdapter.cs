@@ -22,13 +22,21 @@ namespace Configuration
         public bool Exists(object configurationObject)
         {
             throw new NotImplementedException();
+	}
+
+        public T Load<T>()
+            where T : new()
+        {
+            var result = new T();
+            LoadInto(result);
+            return result;
         }
 
         /// <summary>Loads configuration data into the passed instance.</summary>
         /// <param name="configurationObject">The object which has to be filled with data.</param>
         /// <exception cref="ArgumentNullException">If <paramref name="configurationObject"/> is null.</exception>
         /// <exception cref="InvalidOperationException">If a property is of type Nullable and defines not exactly 1 type parameter.</exception>
-        public void Load(object configurationObject)
+        public void LoadInto(object configurationObject)
         {
             if (configurationObject == null) throw new ArgumentNullException(nameof(configurationObject));
 
