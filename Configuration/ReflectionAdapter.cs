@@ -126,8 +126,5 @@ namespace Configuration
 
             _store.SetValues(configOjectType.Name, values);
         }
-
-
-        
     }
 }
