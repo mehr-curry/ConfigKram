@@ -5,10 +5,18 @@ using System.Reflection;
 
 namespace Configuration
 {
+    /// <summary>A ConfigurationAdapter implementation which uses Expression trees to fill an object with data or retrieve data from an object. </summary>
     public class ExpressionAdapter : IConfigurationAdapter
     {
-        public static IDictionary<Type, Delegate> ExpressionCache { get; } = new Dictionary<Type, Delegate>();
+        private static IDictionary<Type, Delegate> LoadExpressionsCache { get; } = new Dictionary<Type, Delegate>();
+        private static IDictionary<Type, Delegate> SaveExpressionsCache { get; } = new Dictionary<Type, Delegate>();
+
         private readonly IConfigurationStore _store;
+        private readonly PropertyInfo _piIndexer =
+            typeof(IDictionary<string, object>).GetProperty("Item", new[] {typeof(string)});
+        private readonly MethodInfo _miConvertTo =
+            typeof(ExpressionAdapter).GetMethod(nameof(ConvertTo), BindingFlags.Static | BindingFlags.NonPublic);
+
 
         /// <summary>Initializes a new instance with the provided storage object to access an underlying storage.</summary>
         /// <param name="store">A configration storage to get data from or set data to.</param>
@@ -30,36 +38,43 @@ namespace Configuration
 
             var configObjectType = configurationObject.GetType();
             var values = _store.GetValues(configObjectType.Name);
-            var piIndexer = typeof(IDictionary<string, object>).GetProperty("Item", new[] {typeof(string)});
-            var expValuesParameter = Expression.Parameter(typeof(IDictionary<string, object>), nameof(values));
-            var expObjectParameter = Expression.Parameter(configObjectType, nameof(configurationObject));
 
-            var assignmentList = new List<Expression>();
-
-            foreach (var property in configObjectType.GetProperties())
+            // Did we already create a delegate for the configuration objects type?
+            if (!LoadExpressionsCache.TryGetValue(configObjectType, out var compiledDelegate))
             {
-                var expValuesIndexer =
-                    Expression.MakeIndex(expValuesParameter, piIndexer, new[] {Expression.Constant(property.Name)});
-                var expTarget = Expression.Property(expObjectParameter, property);
-                var expTargetPropType = Expression.Constant(property.PropertyType);
-                var miConvertTo =
-                    typeof(ExpressionAdapter).GetMethod(nameof(ConvertTo),
-                        BindingFlags.Static | BindingFlags.NonPublic);
-                var expCallConvert = Expression.Call(miConvertTo, expTargetPropType, expValuesIndexer);
-                var expAssign = Expression.Assign(expTarget, Expression.Convert(expCallConvert, property.PropertyType));
+                var expValuesParameter = Expression.Parameter(typeof(IDictionary<string, object>), nameof(values));
+                var expObjectParameter = Expression.Parameter(configObjectType, nameof(configurationObject));
+                var assignmentList = new List<Expression>();
 
-                assignmentList.Add(expAssign);
+                foreach (var property in configObjectType.GetProperties())
+                {
+                    var expValuesIndexer =
+                        Expression.MakeIndex(expValuesParameter, _piIndexer,
+                            new[] {Expression.Constant(property.Name)});
+                    var expTarget = Expression.Property(expObjectParameter, property);
+                    var expTargetPropType = Expression.Constant(property.PropertyType);
+                    var expCallConvert = Expression.Call(_miConvertTo, expTargetPropType, expValuesIndexer);
+                    var expAssign = Expression.Assign(expTarget,
+                        Expression.Convert(expCallConvert, property.PropertyType));
+
+                    assignmentList.Add(expAssign);
+                }
+
+                var expAssignBlock = Expression.Block(assignmentList);
+
+                compiledDelegate = Expression.Lambda(expAssignBlock, expObjectParameter, expValuesParameter).Compile();
+
+                LoadExpressionsCache.Add(configObjectType, compiledDelegate);
             }
 
-            var expAssignBlock = Expression.Block(assignmentList);
-
-            Expression.Lambda(expAssignBlock, expObjectParameter, expValuesParameter)
-                .Compile()
-                .DynamicInvoke(configurationObject, values);
+            compiledDelegate.DynamicInvoke(configurationObject, values);
         }
 
         private static object ConvertTo(Type propertyType, object value)
         {
+            if (propertyType == null) throw new ArgumentNullException(nameof(propertyType));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
             var isNullable = propertyType.IsByRef;
 
             // As the next step we will check whether the properties type is
