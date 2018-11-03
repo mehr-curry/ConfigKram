@@ -40,10 +40,10 @@ namespace Configuration
         {
             if (configurationObject == null) throw new ArgumentNullException(nameof(configurationObject));
 
-            var configOjectType = configurationObject.GetType();
-            var values = _store.GetValues(configOjectType.Name);
+            var configObjectType = configurationObject.GetType();
+            var values = _store.GetValues(configObjectType.Name);
 
-            foreach (var property in configOjectType.GetProperties())
+            foreach (var property in configObjectType.GetProperties())
             {
                 // We retrieve the value from the storages return value.
                 // If there is no entry we will skip the property.
@@ -53,49 +53,56 @@ namespace Configuration
                 }
 
                 var propertyType = property.PropertyType;
-                var isNullable = propertyType.IsByRef;
-
-                // As the next step we will check whether the properties type is
-                // is Nullable<T>. If so we will take the type argument as our 
-                // target type
-                if (propertyType.IsConstructedGenericType &&
-                    propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    var genericArgs = propertyType.GetGenericArguments();
-
-                    if (genericArgs.Length != 1)
-                    {
-                        throw new InvalidOperationException(
-                            $"Only {typeof(Nullable<>).Name} with 1 type argument is supported.");
-                    }
-
-                    propertyType = genericArgs[0];
-                    isNullable = true;
-                }
-
-                // We are going to convert the raw value from the storage into something
-                // the property will accept.
-                if (propertyType != typeof(string) && 
-                    typeof(IConvertible).IsAssignableFrom(propertyType))
-                {
-                    // If the property is nullable, we accept String.Empty as null.
-                    // Convert.ChangeType cannot convert String.Empty into a primitve value.
-                    if (isNullable && 
-                        value is string stringValue &&
-                        string.IsNullOrEmpty(stringValue))
-                    {
-                        value = null;
-                    }
-                    else
-                    {
-                        // otherwise we use the frameworks capabilities to 
-                        // convert the string into our target type
-                        value = Convert.ChangeType(value, propertyType);
-                    }
-                }
                 
-                property.SetValue(configurationObject, value);
+                property.SetValue(configurationObject, 
+                                  ConvertTo(propertyType, value));
             }
+        }
+
+        private static object ConvertTo(Type propertyType, object value)
+        {
+            var isNullable = propertyType.IsByRef;
+
+            // As the next step we will check whether the properties type is
+            // is Nullable<T>. If so we will take the type argument as our 
+            // target type
+            if (propertyType.IsConstructedGenericType &&
+                propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                var genericArgs = propertyType.GetGenericArguments();
+
+                if (genericArgs.Length != 1)
+                {
+                    throw new InvalidOperationException(
+                        $"Only {typeof(Nullable<>).Name} with 1 type argument is supported.");
+                }
+
+                propertyType = genericArgs[0];
+                isNullable = true;
+            }
+
+            // We are going to convert the raw value from the storage into something
+            // the property will accept.
+            if (propertyType != typeof(string) &&
+                typeof(IConvertible).IsAssignableFrom(propertyType))
+            {
+                // If the property is nullable, we accept String.Empty as null.
+                // Convert.ChangeType cannot convert String.Empty into a primitve value.
+                if (isNullable &&
+                    value is string stringValue &&
+                    string.IsNullOrEmpty(stringValue))
+                {
+                    value = null;
+                }
+                else
+                {
+                    // otherwise we use the frameworks capabilities to 
+                    // convert the string into our target type
+                    value = System.Convert.ChangeType(value, propertyType);
+                }
+            }
+
+            return value;
         }
 
         /// <summary>Stores the passed object into a configuration storage.</summary>
@@ -124,8 +131,5 @@ namespace Configuration
 
             _store.SetValues(configOjectType.Name, values);
         }
-
-
-        
     }
 }
