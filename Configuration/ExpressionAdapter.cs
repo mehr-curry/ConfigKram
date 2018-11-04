@@ -22,6 +22,11 @@ namespace Configuration
             _store = store ?? throw new ArgumentNullException(nameof(store));
         }
 
+        public bool Exists(object configurationObject)
+        {
+            throw new NotImplementedException();
+        }
+
         public T Load<T>() where T : new()
         {
             var result = new T();

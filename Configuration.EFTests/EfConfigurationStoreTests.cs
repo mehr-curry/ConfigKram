@@ -10,7 +10,7 @@ namespace Configuration.EfTests
     public class EfConfigurationStoreTests
     {
         [Fact]
-        public void Test1()
+        public void EfConfigurationStoreGetValuesTest()
         {
             var moqDbConfiguration = new Mock<IConfigurationDbContext>();
             moqDbConfiguration.SetupGet(o => o.ConfigurationEntries).Returns(
