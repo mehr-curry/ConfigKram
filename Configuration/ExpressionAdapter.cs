@@ -69,7 +69,7 @@ namespace Configuration
                     var expTargetProperty = Expression.Property(expObjectParameter, property);
                     var expTargetPropType = Expression.Constant(property.PropertyType);
                     var expCallConvert = Expression.Call(Adapter.ConvertToMethodInfo, expValuesIndexer, expTargetPropType);
-                    // configurationObject.Property = Adapter.ConvertToMethodInfo(values[mame], propertyType)
+                    // configurationObject.Property = Adapter.ConvertTo(values[mame], propertyType)
                     var expAssign = Expression.Assign(expTargetProperty,
                         Expression.Convert(expCallConvert, property.PropertyType));
 
@@ -78,9 +78,9 @@ namespace Configuration
 
                 // creates a block for all assignments
                 // {
-                //    configurationObject.Property1 = Adapter.ConvertToMethodInfo(values[mame1], propertyType1)
+                //    configurationObject.Property1 = Adapter.ConvertTo(values[mame1], propertyType1)
                 //    ...
-                //    configurationObject.PropertyN = Adapter.ConvertToMethodInfo(values[mameN], propertyTypeN)
+                //    configurationObject.PropertyN = Adapter.ConvertTo(values[mameN], propertyTypeN)
                 // }
                 var expAssignBlock = Expression.Block(assignmentList);
 
