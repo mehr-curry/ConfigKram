@@ -8,7 +8,7 @@ namespace ConfigurationTests
         [Fact]
         public void LoadTest()
         {
-            var configuration = new ReflectionAdapter(new DotNetConfigurationStore() { FileName = "ConfigKramLoadTest.config" });
+            var configuration = new ExpressionAdapter(new DotNetConfigurationStore() { FileName = "ConfigKramLoadTest.config" });
             var test = configuration.Load<TestConfigurationObject>();
             Assert.Equal("default", test.TestString);
             Assert.Equal(10, test.TestInt);
