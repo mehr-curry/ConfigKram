@@ -14,6 +14,7 @@ namespace Configuration
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
+        /// <remarks>String.Empty will be treated as null if the target property is nullable.</remarks>
         public static object ConvertTo(object value, Type targetType)
         {
             if (targetType == null) throw new ArgumentNullException(nameof(targetType));
@@ -45,7 +46,7 @@ namespace Configuration
                 typeof(IConvertible).IsAssignableFrom(targetType))
             {
                 // If the property is nullable, we accept String.Empty as null.
-                // Convert.ChangeType cannot convert String.Empty into a primitve value.
+                // Convert.ChangeType cannot convert String.Empty into a primitive value.
                 if (isNullable &&
                     value is string stringValue &&
                     String.IsNullOrEmpty(stringValue))
