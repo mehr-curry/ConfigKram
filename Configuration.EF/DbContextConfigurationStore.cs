@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
 namespace Configuration.EF
 {
@@ -65,6 +64,7 @@ namespace Configuration.EF
                         Name = kvp.Key, 
                         Value = kvp.Value?.ToString()
                     };
+
                     
                     Context.ConfigurationEntries.Add(entry);
                 }

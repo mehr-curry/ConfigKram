@@ -1,4 +1,3 @@
-using System;
 using Configuration;
 using Xunit;
 
